@@ -154,3 +154,4 @@
 /Users/gb/Documents/Project/DocumentManagementBackend/DocumentManagementBackend/obj/Debug/net9.0/DocumentManagementBackend.pdb
 /Users/gb/Documents/Project/DocumentManagementBackend/DocumentManagementBackend/obj/Debug/net9.0/DocumentManagementBackend.genruntimeconfig.cache
 /Users/gb/Documents/Project/DocumentManagementBackend/DocumentManagementBackend/obj/Debug/net9.0/ref/DocumentManagementBackend.dll
+/Users/gb/Documents/Project/DocumentManagementBackend/DocumentManagementBackend/obj/Debug/net9.0/DocumentManagementBackend.sourcelink.json

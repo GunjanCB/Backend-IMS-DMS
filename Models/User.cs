@@ -6,6 +6,8 @@ namespace DocumentManagementBackend.Models
         public string ServerName { get; set; } = null;
         public string Username { get; set; } = null;
         public string Password { get; set; } = null;
+
+        
     }
 
 }
