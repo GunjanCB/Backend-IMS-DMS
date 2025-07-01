@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/gb/Documents/Project/DocumentManagementBackend/DocumentManagementBackend/DocumentManagementBackend.csproj": {}
+    "/Users/gb/Documents/Project/DocumentManagementBackend/DocumentManagementBackend.csproj": {}
   },
   "projects": {
-    "/Users/gb/Documents/Project/DocumentManagementBackend/DocumentManagementBackend/DocumentManagementBackend.csproj": {
+    "/Users/gb/Documents/Project/DocumentManagementBackend/DocumentManagementBackend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/gb/Documents/Project/DocumentManagementBackend/DocumentManagementBackend/DocumentManagementBackend.csproj",
+        "projectUniqueName": "/Users/gb/Documents/Project/DocumentManagementBackend/DocumentManagementBackend.csproj",
         "projectName": "DocumentManagementBackend",
-        "projectPath": "/Users/gb/Documents/Project/DocumentManagementBackend/DocumentManagementBackend/DocumentManagementBackend.csproj",
+        "projectPath": "/Users/gb/Documents/Project/DocumentManagementBackend/DocumentManagementBackend.csproj",
         "packagesPath": "/Users/gb/.nuget/packages/",
-        "outputPath": "/Users/gb/Documents/Project/DocumentManagementBackend/DocumentManagementBackend/obj/",
+        "outputPath": "/Users/gb/Documents/Project/DocumentManagementBackend/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/gb/.nuget/NuGet/NuGet.Config"
@@ -44,6 +44,10 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "dependencies": {
+            "MailKit": {
+              "target": "Package",
+              "version": "[4.13.0, )"
+            },
             "Microsoft.AspNetCore.Mvc.Core": {
               "target": "Package",
               "version": "[2.3.0, )"
@@ -65,6 +69,10 @@
               "suppressParent": "All",
               "target": "Package",
               "version": "[9.0.6, )"
+            },
+            "MimeKit": {
+              "target": "Package",
+              "version": "[4.13.0, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",

@@ -1,11 +1,18 @@
+using DocumentManagementBackend.Data.Interfaces;
 using DocumentManagementBackend.Data;
+
+using DocumentManagementBackend.Repositories;
 using Microsoft.EntityFrameworkCore;
+using DocumentManagementBackend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Reg DB Context
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlite("Data Source=users.db"));
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 
 // CORS
@@ -22,6 +29,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<EmailService>();
 
 var app = builder.Build();
 
@@ -34,7 +42,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseRouting();
 app.UseAuthorization();
+
 app.MapControllers();
 
 app.Run();
