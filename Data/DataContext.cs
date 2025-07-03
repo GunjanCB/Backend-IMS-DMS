@@ -8,5 +8,6 @@ namespace DocumentManagementBackend.Data
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
         public DbSet<User> Users { get; set; }
         public DbSet<UserOtp> UserOtps { get; set; }
+        public DbSet<CapturedImage> CapturedImages { get; set; }
     }
 }

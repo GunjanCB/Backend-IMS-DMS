@@ -13,7 +13,7 @@ builder.Services.AddDbContext<DataContext>(options =>
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IEmailService, EmailService>();
-
+builder.Services.AddScoped<ICapturedImageRepository, CapturedImageRepository>();
 
 // CORS
 builder.Services.AddCors(options =>
