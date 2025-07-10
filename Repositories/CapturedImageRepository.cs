@@ -20,4 +20,22 @@ public class CapturedImageRepository : ICapturedImageRepository
     {
         return await _context.CapturedImages.ToListAsync();
     }
+   public async Task<List<CapturedImage>> GetCapturedImagesByUserIdAsync(int userId)
+{
+    return await _context.CapturedImages
+        .Where(img => img.UserId == userId)
+        .OrderByDescending(img => img.UploadedAt)
+        .ToListAsync();
+}
+
+    public async Task<bool> DeleteCapturedImageAsync(int id)
+    {
+        var image = await _context.CapturedImages.FindAsync(id);
+        if (image == null)
+            return false;
+
+        _context.CapturedImages.Remove(image);
+        await _context.SaveChangesAsync();
+        return true;
+    }
 }

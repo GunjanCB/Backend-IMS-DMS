@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "uM0mWejBbea88jClFjVPoCNmLINkyUhtRsNj63mh4PU=",
+  "Source": "DocumentManagementBackend",
+  "BasePath": "_content/DocumentManagementBackend",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

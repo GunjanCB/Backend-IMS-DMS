@@ -10,6 +10,8 @@ public class User
 
     public string? OtpCode { get; set; }
     public DateTime? OtpExpiry { get; set; }
+
+    public ICollection<CapturedImage> CapturedImages { get; set; } = new List<CapturedImage>();
         
     }
 

@@ -5,6 +5,11 @@ using DocumentManagementBackend.Data.Interfaces;
 using DocumentManagementBackend.Services;
 using Microsoft.VisualBasic;
 using System.ComponentModel.DataAnnotations;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
+using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
+
 
 namespace DocumentManagementBackend.Controllers
 {
@@ -15,10 +20,12 @@ namespace DocumentManagementBackend.Controllers
     {
         private readonly IUserRepository _userRepository;
         private readonly IEmailService _emailService;
-        public UserController(IUserRepository userRepository, IEmailService emailService)
+        private readonly IConfiguration _config;
+        public UserController(IUserRepository userRepository, IEmailService emailService, IConfiguration config)
         {
             _userRepository = userRepository;
             _emailService = emailService;
+            _config = config;
         }
 
         private string GenerateOtp(int length = 6)
@@ -44,7 +51,7 @@ namespace DocumentManagementBackend.Controllers
 
             _emailService.SendEmail(dto.Email, "Your OTP Code", $"Your Otp Code is {otpCode}");
             return Ok(new { message = "OTP sent to your email" });
-            
+
         }
 
 
@@ -73,7 +80,7 @@ namespace DocumentManagementBackend.Controllers
 
             }
             // Save user to DB
-           await _userRepository.AddUserAsync(user);
+            await _userRepository.AddUserAsync(user);
 
             // Generate OTP
             var otpCode = GenerateOtp();
@@ -88,19 +95,51 @@ namespace DocumentManagementBackend.Controllers
             return Ok(new { message = "User registered successfully. OTP sent to your Email." });
         }
 
-      [HttpPost("login")]
-public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
-{
-    if (loginDto == null || string.IsNullOrEmpty(loginDto.Identifier) || string.IsNullOrEmpty(loginDto.Password))
-        return BadRequest("Username or Email and password are required.");
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginDto dto)
+        {
+            var user = await _userRepository.ValidateUserAsync(dto.Identifier, dto.Password);
+            if (user == null)
+                return BadRequest(new { message = "Invalid username or password" });
 
-    var user = await _userRepository.GetUserByIdentifierAsync(loginDto.Identifier);
+            var jwtSection = _config.GetSection("JwtSettings");
+            var key = Encoding.UTF8.GetBytes(jwtSection["SecretKey"]);
+            var issuer = jwtSection["Issuer"];
+            var audience = jwtSection["Audience"];
 
-    if (user == null || user.Password != loginDto.Password)
-        return Unauthorized("Invalid username/email or password.");
+    
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.Name, user.Username)
+                }),
+                Expires = DateTime.UtcNow.AddHours(2),
+                Issuer = issuer,
+                Audience = audience,
+                SigningCredentials = new SigningCredentials(
+                    new SymmetricSecurityKey(key),
+                    SecurityAlgorithms.HmacSha256Signature
+                )
+            };
 
-    return Ok(new { message = "Login successful", user });
-}
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var jwtToken = tokenHandler.WriteToken(token);
 
+            // 3. Return user info + token
+            return Ok(new
+            {
+                message = "Login successful",
+                user = new
+                {
+                    id = user.Id,
+                    username = user.Username,
+                    email = user.Email,
+                },
+                token = jwtToken
+            });
         }
     }
+}

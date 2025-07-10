@@ -15,7 +15,7 @@ namespace DocumentManagementBackend.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "9.0.6");
+            modelBuilder.HasAnnotation("ProductVersion", "8.0.5");
 
             modelBuilder.Entity("CapturedImage", b =>
                 {
@@ -45,7 +45,12 @@ namespace DocumentManagementBackend.Migrations
                     b.Property<DateTime>("UploadedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("CapturedImages");
                 });
@@ -99,6 +104,21 @@ namespace DocumentManagementBackend.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UserOtps");
+                });
+
+            modelBuilder.Entity("CapturedImage", b =>
+                {
+                    b.HasOne("DocumentManagementBackend.Models.User", "User")
+                        .WithMany("CapturedImages")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("DocumentManagementBackend.Models.User", b =>
+                {
+                    b.Navigation("CapturedImages");
                 });
 #pragma warning restore 612, 618
         }

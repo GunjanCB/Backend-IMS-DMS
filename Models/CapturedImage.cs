@@ -1,3 +1,5 @@
+using DocumentManagementBackend.Models;
+
 public class CapturedImage
 {
     public int Id { get; set; }
@@ -7,4 +9,8 @@ public class CapturedImage
     public string ImageBase64 { get; set; } = string.Empty;
     public string ImageData { get; set; } = string.Empty;
     public DateTime UploadedAt { get; set; } = DateTime.UtcNow;
+
+    public int? UserId { get; set; }
+    public User? User { get; set; }
+
 }

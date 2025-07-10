@@ -1,11 +1,39 @@
 using DocumentManagementBackend.Data.Interfaces;
 using DocumentManagementBackend.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 using DocumentManagementBackend.Repositories;
 using Microsoft.EntityFrameworkCore;
 using DocumentManagementBackend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Red JTW from appsettings.Jason
+var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+var issuer = jwtSettings["Issuer"];
+var audience = jwtSettings["Audience"];
+var secretKey = jwtSettings["secretkey"];
+
+//JWT
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = issuer,
+            ValidAudience = audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+               
+        };
+    });
+
+builder.Services.AddAuthorization();
 
 // Reg DB Context
 builder.Services.AddDbContext<DataContext>(options =>
@@ -43,8 +71,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseRouting();
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
 app.Run();

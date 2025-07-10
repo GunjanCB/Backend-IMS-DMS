@@ -15,6 +15,15 @@ namespace DocumentManagementBackend.Repositories
             _context = context;
         }
 
+        public async Task<User?> ValidateUserAsync(string identifier, string password)
+{
+    
+    return await _context.Users
+         .FirstOrDefaultAsync(u => (u.Username == identifier || u.Email == identifier) 
+                                   && u.Password == password);
+}
+
+
         public async Task AddUserAsync(User user)
         {
             _context.Users.Add(user);

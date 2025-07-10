@@ -315,3 +315,9 @@
 /Users/gb/Documents/Project/DocumentManagementBackend/obj/Debug/net9.0/DocumentManagementBackend.pdb
 /Users/gb/Documents/Project/DocumentManagementBackend/obj/Debug/net9.0/DocumentManagementBackend.genruntimeconfig.cache
 /Users/gb/Documents/Project/DocumentManagementBackend/obj/Debug/net9.0/ref/DocumentManagementBackend.dll
+/Users/gb/Documents/Project/DocumentManagementBackend/bin/Debug/net9.0/publish/web.config
+/Users/gb/Documents/Project/DocumentManagementBackend/bin/Debug/net9.0/publish/appsettings.Development.json
+/Users/gb/Documents/Project/DocumentManagementBackend/bin/Debug/net9.0/publish/appsettings.json
+/Users/gb/Documents/Project/DocumentManagementBackend/bin/Debug/net9.0/publish/DocumentManagementBackend.deps.json
+/Users/gb/Documents/Project/DocumentManagementBackend/bin/Debug/net9.0/publish/DocumentManagementBackend.runtimeconfig.json
+/Users/gb/Documents/Project/DocumentManagementBackend/bin/Debug/net9.0/publish/DocumentManagementBackend.staticwebassets.endpoints.json
