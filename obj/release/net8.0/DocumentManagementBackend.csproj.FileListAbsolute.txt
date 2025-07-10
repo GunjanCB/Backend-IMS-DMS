@@ -132,3 +132,11 @@
 /Users/gb/Documents/Project/DocumentManagementBackend/obj/Release/net8.0/DocumentManagementBackend.pdb
 /Users/gb/Documents/Project/DocumentManagementBackend/obj/Release/net8.0/DocumentManagementBackend.genruntimeconfig.cache
 /Users/gb/Documents/Project/DocumentManagementBackend/obj/Release/net8.0/ref/DocumentManagementBackend.dll
+/Users/gb/Documents/Project/DocumentManagementBackend/bin/Release/net8.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll
+/Users/gb/Documents/Project/DocumentManagementBackend/bin/Release/net8.0/Microsoft.IdentityModel.Abstractions.dll
+/Users/gb/Documents/Project/DocumentManagementBackend/bin/Release/net8.0/Microsoft.IdentityModel.JsonWebTokens.dll
+/Users/gb/Documents/Project/DocumentManagementBackend/bin/Release/net8.0/Microsoft.IdentityModel.Logging.dll
+/Users/gb/Documents/Project/DocumentManagementBackend/bin/Release/net8.0/Microsoft.IdentityModel.Protocols.dll
+/Users/gb/Documents/Project/DocumentManagementBackend/bin/Release/net8.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+/Users/gb/Documents/Project/DocumentManagementBackend/bin/Release/net8.0/Microsoft.IdentityModel.Tokens.dll
+/Users/gb/Documents/Project/DocumentManagementBackend/bin/Release/net8.0/System.IdentityModel.Tokens.Jwt.dll

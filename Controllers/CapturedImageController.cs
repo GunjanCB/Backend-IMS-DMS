@@ -36,14 +36,15 @@ public async Task<IActionResult> UploadImage([FromBody] CapturedImageDto dto)
         FileType = dto.FileType,
         IsMultipage = dto.Multipage,
         ImageBase64 = dto.Image,
-        UserId = userId
+        UserId = userId,
+        UploadedAt = DateTime.UtcNow
     };
 
     await _repository.AddCapturedImageAsync(imageEntity);
     return Ok(new { message = "Image uploaded successfully" });
 }
 
-
+[Authorize]
 [HttpGet]
 public async Task<IActionResult> GetAllImages()
 {
@@ -63,7 +64,7 @@ public async Task<IActionResult> GetAllImages()
         Multipage = img.IsMultipage,
         Image = img.ImageBase64.StartsWith("data:")
             ? img.ImageBase64
-            : $"data:image/jpeg;base64, {img.ImageBase64}",
+            : $"data:image/jpeg;base64,{img.ImageBase64}",
         Date = img.UploadedAt
     });
 

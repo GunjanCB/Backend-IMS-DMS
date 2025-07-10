@@ -6,6 +6,7 @@
 /Users/gb/Documents/Project/DocumentManagementBackend/publish/DocumentManagementBackend.pdb
 /Users/gb/Documents/Project/DocumentManagementBackend/publish/BouncyCastle.Cryptography.dll
 /Users/gb/Documents/Project/DocumentManagementBackend/publish/MailKit.dll
+/Users/gb/Documents/Project/DocumentManagementBackend/publish/Microsoft.AspNetCore.Authentication.JwtBearer.dll
 /Users/gb/Documents/Project/DocumentManagementBackend/publish/Microsoft.AspNetCore.OpenApi.dll
 /Users/gb/Documents/Project/DocumentManagementBackend/publish/Microsoft.Data.Sqlite.dll
 /Users/gb/Documents/Project/DocumentManagementBackend/publish/Microsoft.EntityFrameworkCore.dll
@@ -13,6 +14,12 @@
 /Users/gb/Documents/Project/DocumentManagementBackend/publish/Microsoft.EntityFrameworkCore.Relational.dll
 /Users/gb/Documents/Project/DocumentManagementBackend/publish/Microsoft.EntityFrameworkCore.Sqlite.dll
 /Users/gb/Documents/Project/DocumentManagementBackend/publish/Microsoft.Extensions.DependencyModel.dll
+/Users/gb/Documents/Project/DocumentManagementBackend/publish/Microsoft.IdentityModel.Abstractions.dll
+/Users/gb/Documents/Project/DocumentManagementBackend/publish/Microsoft.IdentityModel.JsonWebTokens.dll
+/Users/gb/Documents/Project/DocumentManagementBackend/publish/Microsoft.IdentityModel.Logging.dll
+/Users/gb/Documents/Project/DocumentManagementBackend/publish/Microsoft.IdentityModel.Protocols.dll
+/Users/gb/Documents/Project/DocumentManagementBackend/publish/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+/Users/gb/Documents/Project/DocumentManagementBackend/publish/Microsoft.IdentityModel.Tokens.dll
 /Users/gb/Documents/Project/DocumentManagementBackend/publish/Microsoft.OpenApi.dll
 /Users/gb/Documents/Project/DocumentManagementBackend/publish/MimeKit.dll
 /Users/gb/Documents/Project/DocumentManagementBackend/publish/SQLitePCLRaw.batteries_v2.dll
@@ -21,6 +28,7 @@
 /Users/gb/Documents/Project/DocumentManagementBackend/publish/Swashbuckle.AspNetCore.Swagger.dll
 /Users/gb/Documents/Project/DocumentManagementBackend/publish/Swashbuckle.AspNetCore.SwaggerGen.dll
 /Users/gb/Documents/Project/DocumentManagementBackend/publish/Swashbuckle.AspNetCore.SwaggerUI.dll
+/Users/gb/Documents/Project/DocumentManagementBackend/publish/System.IdentityModel.Tokens.Jwt.dll
 /Users/gb/Documents/Project/DocumentManagementBackend/publish/System.Security.Cryptography.Pkcs.dll
 /Users/gb/Documents/Project/DocumentManagementBackend/publish/runtimes/browser-wasm/nativeassets/net8.0/e_sqlite3.a
 /Users/gb/Documents/Project/DocumentManagementBackend/publish/runtimes/linux-arm/native/libe_sqlite3.so
