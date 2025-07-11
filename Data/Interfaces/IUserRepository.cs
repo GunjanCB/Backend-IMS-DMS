@@ -15,7 +15,6 @@ namespace DocumentManagementBackend.Data.Interfaces
 
     Task SaveOtpAsync(string email, string otpCode, DateTime expiry);
     Task<bool> VerifyOtpAsync(string email, string otpCode);
-    Task<User?> ValidateUserAsync(string identifier, string password);
 
       
     }

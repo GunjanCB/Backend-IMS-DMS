@@ -9,6 +9,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Identity;
+
+
 
 
 namespace DocumentManagementBackend.Controllers
@@ -70,17 +73,25 @@ namespace DocumentManagementBackend.Controllers
 
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(User user)
+        public async Task<IActionResult> Register([FromBody] RegisterDto dto)
         {
-            if (string.IsNullOrWhiteSpace(user.ServerName) ||
-                string.IsNullOrWhiteSpace(user.Username) ||
-                string.IsNullOrWhiteSpace(user.Password))
+            if (string.IsNullOrWhiteSpace(dto.ServerName) ||
+                string.IsNullOrWhiteSpace(dto.Username) ||
+                string.IsNullOrWhiteSpace(dto.Password))
             {
                 return BadRequest("All Fields are required.");
 
             }
-            // Save user to DB
+
+            var user = new User
+            {
+                Username = dto.Username,
+                Email = dto.Email,
+                ServerName = dto.ServerName,
+                PasswordHash = new PasswordHasher<User>().HashPassword(null!, dto.Password)
+            };
             await _userRepository.AddUserAsync(user);
+
 
             // Generate OTP
             var otpCode = GenerateOtp();
@@ -98,10 +109,17 @@ namespace DocumentManagementBackend.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
-            var user = await _userRepository.ValidateUserAsync(dto.Identifier, dto.Password);
+            var user = await _userRepository.GetUserByIdentifierAsync(dto.Identifier);
             if (user == null)
-                return BadRequest(new { message = "Invalid username or password" });
+                return Unauthorized(new { message = "Invalid username or password" });
 
+            var passwordHasher = new PasswordHasher<User>();
+            var verificationResult = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, dto.Password);
+
+            if (verificationResult != PasswordVerificationResult.Success)
+                return Unauthorized(new { message = "Invalid username or password" });
+
+            // JWT token Generate
             var jwtSection = _config.GetSection("JwtSettings");
             var key = Encoding.UTF8.GetBytes(jwtSection["SecretKey"]);
             var issuer = jwtSection["Issuer"];

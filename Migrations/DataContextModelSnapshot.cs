@@ -70,7 +70,7 @@ namespace DocumentManagementBackend.Migrations
                     b.Property<DateTime?>("OtpExpiry")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Password")
+                    b.Property<string>("PasswordHash")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ServerName")
