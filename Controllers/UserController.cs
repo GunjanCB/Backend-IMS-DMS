@@ -10,6 +10,8 @@ using System.Text;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Cryptography.X509Certificates;
 
 
 
@@ -77,10 +79,23 @@ namespace DocumentManagementBackend.Controllers
         {
             if (string.IsNullOrWhiteSpace(dto.ServerName) ||
                 string.IsNullOrWhiteSpace(dto.Username) ||
-                string.IsNullOrWhiteSpace(dto.Password))
+                string.IsNullOrWhiteSpace(dto.Password) ||
+                string.IsNullOrWhiteSpace(dto.Email))
             {
                 return BadRequest("All Fields are required.");
 
+            }
+
+            var existingUser = await _userRepository.GetUserByEmailAsync(dto.Email);
+            if (existingUser != null)
+            {
+                return BadRequest(new { message = "Email is already registered.Please use a different email." });
+            }
+
+            var existingUsername = await _userRepository.GetUserByUsernameorEmailAsync(dto.Username);
+            if (existingUsername != null)
+            {
+                return BadRequest(new { message = "Username is already taken. Choose another" });
             }
 
             var user = new User
@@ -125,7 +140,7 @@ namespace DocumentManagementBackend.Controllers
             var issuer = jwtSection["Issuer"];
             var audience = jwtSection["Audience"];
 
-    
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]
@@ -133,7 +148,7 @@ namespace DocumentManagementBackend.Controllers
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Name, user.Username)
                 }),
-                Expires = DateTime.UtcNow.AddHours(2),
+                Expires = DateTime.UtcNow.AddDays(1),
                 Issuer = issuer,
                 Audience = audience,
                 SigningCredentials = new SigningCredentials(
@@ -159,5 +174,46 @@ namespace DocumentManagementBackend.Controllers
                 token = jwtToken
             });
         }
+        [Authorize]
+            [HttpPost("change-password")]
+            public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto dto)
+            {
+                if (string.IsNullOrWhiteSpace(dto.CurrentPassword) ||
+                string.IsNullOrWhiteSpace(dto.NewPassword) ||
+                string.IsNullOrWhiteSpace(dto.ConfirmPassword))
+                {
+                    return BadRequest("All field are required.");
+                }
+
+                if (dto.NewPassword != dto.ConfirmPassword)
+                {
+                    return BadRequest("New and confirm password do not match.");
+                }
+
+                // Get logged in user from jwt
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrWhiteSpace(userId))
+                    return Unauthorized();
+
+                var user = await _userRepository.GetUserByIdAsync(int.Parse(userId));
+                if (user == null)
+                    return Unauthorized("User not found");
+
+                var passwordHasher = new PasswordHasher<User>();
+                var result = passwordHasher.VerifyHashedPassword(user, user.PasswordHash!, dto.CurrentPassword);
+
+                if (result != PasswordVerificationResult.Success)
+                {
+                    return BadRequest("Current password is incorrect.");
+                }
+
+                // Hash n update new pw
+                user.PasswordHash = passwordHasher.HashPassword(user, dto.NewPassword);
+                await _userRepository.SaveChangesAsync();
+
+                return Ok(new { message = "Password Updated Successfully." });
+
+            
+            }
     }
 }

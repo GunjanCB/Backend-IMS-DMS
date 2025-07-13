@@ -33,14 +33,14 @@ namespace DocumentManagementBackend.Repositories
         }
 
         public async Task<User?> GetUserByEmailAsync(string email)
-{
-    return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-}
-public async Task<User?> GetUserByIdentifierAsync(string identifier)
-{
-    return await _context.Users
-        .FirstOrDefaultAsync(u => u.Email == identifier || u.Username == identifier);
-}
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        }
+        public async Task<User?> GetUserByIdentifierAsync(string identifier)
+        {
+            return await _context.Users
+                .FirstOrDefaultAsync(u => u.Email == identifier || u.Username == identifier);
+        }
 
 
         public async Task SaveOtpAsync(string email, string otpCode, DateTime expiry)
@@ -72,6 +72,11 @@ public async Task<User?> GetUserByIdentifierAsync(string identifier)
         public async Task<bool> SaveChangesAsync()
         {
             return (await _context.SaveChangesAsync()) > 0;
+        }
+
+        public async Task<User?> GetUserByIdAsync(int id)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
         }
     }
 }
