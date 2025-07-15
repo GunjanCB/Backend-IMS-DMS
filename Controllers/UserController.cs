@@ -12,6 +12,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Cryptography.X509Certificates;
+using DocumentManagementBackend.Data;
+using Microsoft.EntityFrameworkCore;
 
 
 
@@ -26,11 +28,13 @@ namespace DocumentManagementBackend.Controllers
         private readonly IUserRepository _userRepository;
         private readonly IEmailService _emailService;
         private readonly IConfiguration _config;
-        public UserController(IUserRepository userRepository, IEmailService emailService, IConfiguration config)
+        private readonly DataContext _context;
+        public UserController(IUserRepository userRepository, IEmailService emailService, IConfiguration config, DataContext context)
         {
             _userRepository = userRepository;
             _emailService = emailService;
             _config = config;
+            _context = context;
         }
 
         private string GenerateOtp(int length = 6)
@@ -73,52 +77,78 @@ namespace DocumentManagementBackend.Controllers
             return Ok(new { message = "OTP verified successfully" });
         }
 
-
-        [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterDto dto)
+        [HttpPost("pre-register")]
+        public async Task<IActionResult> PreRegister([FromBody] RegisterDto dto)
         {
-            if (string.IsNullOrWhiteSpace(dto.ServerName) ||
-                string.IsNullOrWhiteSpace(dto.Username) ||
-                string.IsNullOrWhiteSpace(dto.Password) ||
-                string.IsNullOrWhiteSpace(dto.Email))
-            {
-                return BadRequest("All Fields are required.");
+            if (string.IsNullOrWhiteSpace(dto.Email) || string.IsNullOrWhiteSpace(dto.Password) ||
+                string.IsNullOrWhiteSpace(dto.Username) || string.IsNullOrWhiteSpace(dto.ServerName))
+                return BadRequest("All fields are required");
 
-            }
+            // Check if user exists in User or PendingUsers
+            if (await _userRepository.GetUserByEmailAsync(dto.Email) != null)
+                return BadRequest("Email already registered");
 
-            var existingUser = await _userRepository.GetUserByEmailAsync(dto.Email);
-            if (existingUser != null)
-            {
-                return BadRequest(new { message = "Email is already registered.Please use a different email." });
-            }
+            var existingPending = await _context.PendingUsers.FirstOrDefaultAsync(p => p.Email == dto.Email);
+            if (existingPending != null)
+                _context.PendingUsers.Remove(existingPending);
 
-            var existingUsername = await _userRepository.GetUserByUsernameorEmailAsync(dto.Username);
-            if (existingUsername != null)
-            {
-                return BadRequest(new { message = "Username is already taken. Choose another" });
-            }
-
-            var user = new User
-            {
-                Username = dto.Username,
-                Email = dto.Email,
-                ServerName = dto.ServerName,
-                PasswordHash = new PasswordHasher<User>().HashPassword(null!, dto.Password)
-            };
-            await _userRepository.AddUserAsync(user);
-
-
-            // Generate OTP
-            var otpCode = GenerateOtp();
+            var passwordHasher = new PasswordHasher<PendingUser>();
+            var hashedPassword = passwordHasher.HashPassword(null!, dto.Password);
+            var otp = GenerateOtp();
             var expiry = DateTime.UtcNow.AddMinutes(5);
 
-            // Save OTP linked to user's Email
-            await _userRepository.SaveOtpAsync(user.Email, otpCode, expiry);
+            var pendingUser = new PendingUser
+            {
+                Email = dto.Email,
+                Username = dto.Username,
+                ServerName = dto.ServerName,
+                PasswordHash = hashedPassword,
+                OtpCode = otp,
+                OtpExpiry = expiry
+            };
 
-            // Send OTP Email
-            _emailService.SendEmail(user.Email, "Your OTP Code", $"Your OTP Code is {otpCode}");
+            _context.PendingUsers.Add(pendingUser);
+            await _context.SaveChangesAsync();
 
-            return Ok(new { message = "User registered successfully. OTP sent to your Email." });
+            _emailService.SendEmail(dto.Email, "Verify Your Account", $"Your OTP is {otp}");
+
+            return Ok(new { message = "OTP sent to email. Verify to complete registration." });
+        }
+
+
+
+        [HttpPost("complete-registration")]
+        public async Task<IActionResult> CompleteRegistration([FromBody] OtpDto dto)
+        {
+            if (string.IsNullOrWhiteSpace(dto.Email) || string.IsNullOrWhiteSpace(dto.Code))
+                return BadRequest("Email and OTP Code are required.");
+
+            var pendingUser = await _context.PendingUsers.FirstOrDefaultAsync(p => p.Email == dto.Email);
+            if (pendingUser == null)
+                return Unauthorized("No pending registration found for this email.");
+
+            if (pendingUser.OtpCode != dto.Code || pendingUser.OtpExpiry < DateTime.UtcNow)
+                return Unauthorized("Invalid or expired OTP.");
+
+            // (Race condition) re check email reg again or not
+            if (await _userRepository.GetUserByEmailAsync(pendingUser.Email) != null)
+                return BadRequest("Email already registered");
+
+            var newUser = new User
+            {
+                Username = pendingUser.Username,
+                Email = pendingUser.Email,
+                ServerName = pendingUser.ServerName,
+                PasswordHash = pendingUser.PasswordHash
+            };
+
+            await _userRepository.AddUserAsync(newUser);
+            // Del from PEnding
+            _context.PendingUsers.Remove(pendingUser);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Registration complete. You can now login" });
+
         }
 
         [HttpPost("login")]

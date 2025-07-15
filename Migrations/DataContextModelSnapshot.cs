@@ -55,6 +55,40 @@ namespace DocumentManagementBackend.Migrations
                     b.ToTable("CapturedImages");
                 });
 
+            modelBuilder.Entity("DocumentManagementBackend.Models.PendingUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OtpCode")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("OtpExpiry")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ServerName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PendingUsers");
+                });
+
             modelBuilder.Entity("DocumentManagementBackend.Models.User", b =>
                 {
                     b.Property<int>("Id")
